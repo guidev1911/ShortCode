@@ -1,5 +1,6 @@
 package com.guidev1911.encurtadorURL.controller;
 
+import com.guidev1911.encurtadorURL.dto.UrlRequestDTO;
 import com.guidev1911.encurtadorURL.model.Url;
 import com.guidev1911.encurtadorURL.service.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,8 @@ public class UrlController {
     private UrlService service;
 
     @PostMapping("/shorten")
-    public ResponseEntity<String> shorten(@RequestParam String url) {
-        Url newUrl = service.createShortUrl(url);
+    public ResponseEntity<String> shorten(@RequestBody UrlRequestDTO request) {
+        Url newUrl = service.createShortUrl(request.getUrl());
         return ResponseEntity.ok("http://localhost:8080/" + newUrl.getShortCode());
     }
 
