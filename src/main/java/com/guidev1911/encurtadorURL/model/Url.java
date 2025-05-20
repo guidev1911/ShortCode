@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "urls")
+@Table(name = "url")
 public class Url {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,6 @@ public class Url {
         this.shortCode = shortCode;
         this.expirationDate = expirationDate;
     }
-
-    // Getters e Setters
 
     public Long getId() {
         return id;

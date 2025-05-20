@@ -17,31 +17,29 @@ public class UrlService {
 
     public Url createShortUrl(String originalUrl,  LocalDateTime expirationDate) {
 
+        if (originalUrl == null || originalUrl.isBlank()) {
+            throw new IllegalArgumentException("A URL original não pode estar vazia.");
+        }
+
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime finalExpiration;
 
         if (expirationDate == null) {
-            finalExpiration = now.plusDays(1);
-        } else {
-            if (expirationDate.isBefore(now)) {
-                throw new IllegalArgumentException("Data de expiração não pode estar no passado.");
-            }
-
-            LocalDateTime maxExpiration = now.plusDays(7);
-            finalExpiration = expirationDate.isAfter(maxExpiration) ? maxExpiration : expirationDate;
+            expirationDate = now.plusDays(1); // padrão
+        } else if (expirationDate.isBefore(now)) {
+            throw new IllegalArgumentException("A data de expiração não pode estar no passado.");
+        } else if (expirationDate.isAfter(now.plusDays(7))) {
+            throw new IllegalArgumentException("A data de expiração não pode exceder 7 dias.");
         }
-        String shortCode;
-        do {
-            shortCode = UUID.randomUUID().toString().substring(0, 6);
-        } while (repository.findByShortCode(shortCode).isPresent());
 
-        Url url = new Url(null, originalUrl, shortCode, finalExpiration);
+        String shortCode = UUID.randomUUID().toString().substring(0, 8);
+        Url url = new Url(null, originalUrl, shortCode, expirationDate);
         return repository.save(url);
     }
 
     public Optional<String> getOriginalUrl(String shortCode) {
         return repository.findByShortCode(shortCode)
-                .filter(url -> url.getExpirationDate() == null || url.getExpirationDate().isAfter(LocalDateTime.now()))
-                .map(Url::getOriginalUrl);
+                .filter(url -> url.getExpirationDate().isAfter(LocalDateTime.now()))
+                .map(Url::getOriginalUrl)
+                .orElseThrow(() -> new IllegalArgumentException("URL não encontrada ou expirada.")).describeConstable();
     }
 }
