@@ -1,28 +1,35 @@
 package com.guidev1911.encurtadorURL.model;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Table(name = "urls")
 public class Url {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String originalUrl;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true, length = 10)
     private String shortCode;
 
-    public Url() {
-    }
+    @Column(nullable = false)
+    private LocalDateTime expirationDate;
 
-    public Url(Long id, String originalUrl, String shortCode) {
+    public Url() {}
+
+    public Url(Long id, String originalUrl, String shortCode, LocalDateTime expirationDate) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.shortCode = shortCode;
+        this.expirationDate = expirationDate;
     }
+
+    // Getters e Setters
 
     public Long getId() {
         return id;
@@ -48,16 +55,11 @@ public class Url {
         this.shortCode = shortCode;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Url url = (Url) o;
-        return Objects.equals(getId(), url.getId()) && Objects.equals(getOriginalUrl(), url.getOriginalUrl()) && Objects.equals(getShortCode(), url.getShortCode());
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getOriginalUrl(), getShortCode());
+    public void setExpirationDate(LocalDateTime expirationDate) {
+        this.expirationDate = expirationDate;
     }
 }

@@ -1,12 +1,15 @@
 package com.guidev1911.encurtadorURL.controller;
 
-import com.guidev1911.encurtadorURL.dto.UrlRequestDTO;
+import com.guidev1911.encurtadorURL.dto.UrlRequest;
+import com.guidev1911.encurtadorURL.dto.UrlResponse;
 import com.guidev1911.encurtadorURL.model.Url;
 import com.guidev1911.encurtadorURL.service.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
+
+import java.net.URI;
 
 @RestController
 public class UrlController {
@@ -15,24 +18,18 @@ public class UrlController {
     private UrlService service;
 
     @PostMapping("/shorten")
-    public ResponseEntity<String> shorten(@RequestBody UrlRequestDTO request) {
-        Url newUrl = service.createShortUrl(request.getUrl());
-        return ResponseEntity.ok("http://localhost:8080/" + newUrl.getShortCode());
+    public ResponseEntity<UrlResponse> shorten(@RequestBody UrlRequest request) {
+        Url url = service.createShortUrl(request.getOriginalUrl(), request.getExpirationDate());
+        return ResponseEntity.ok(new UrlResponse(url.getShortCode(), url.getExpirationDate()));
     }
 
     @GetMapping("/{shortCode}")
-    public RedirectView redirect(@PathVariable String shortCode) {
+    public ResponseEntity<Object> redirect(@PathVariable String shortCode) {
         return service.getOriginalUrl(shortCode)
-                .map(RedirectView::new)
-                .orElseGet(() -> {
-                    RedirectView view = new RedirectView("/not-found");
-                    view.setStatusCode(org.springframework.http.HttpStatus.NOT_FOUND);
-                    return view;
-                });
+                .map(url -> ResponseEntity.status(HttpStatus.FOUND)
+                        .location(URI.create(url))
+                        .build())
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/not-found")
-    public ResponseEntity<String> notFound() {
-        return ResponseEntity.status(404).body("URL não encontrada.");
-    }
 }
