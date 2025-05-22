@@ -25,6 +25,9 @@ public class Url {
     @Column(nullable = false)
     private int clickCount;
 
+    public Url() {
+    }
+
     public Url(Long id, String originalUrl, String shortCode, LocalDateTime expirationDate, LocalDateTime createdAt) {
         this.id = id;
         this.originalUrl = originalUrl;

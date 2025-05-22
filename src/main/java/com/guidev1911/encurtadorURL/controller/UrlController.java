@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 
 @RestController
 public class UrlController {
@@ -25,7 +24,7 @@ public class UrlController {
     }
 
     @GetMapping("/{shortCode}")
-    public ResponseEntity<Object> redirect(@PathVariable String shortCode) {
+    public ResponseEntity<?> redirect(@PathVariable String shortCode) {
         try {
             String originalUrl = service.getOriginalUrl(shortCode);
             return ResponseEntity.status(HttpStatus.FOUND)
@@ -36,4 +35,14 @@ public class UrlController {
                     .body(e.getMessage());
         }
     }
+    @GetMapping("/stats/{shortCode}")
+    public ResponseEntity<?> getStats(@PathVariable String shortCode) {
+        try {
+            UrlResponse response = service.getUrlStats(shortCode);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 }

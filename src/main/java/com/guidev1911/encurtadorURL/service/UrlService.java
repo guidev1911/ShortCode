@@ -1,5 +1,6 @@
 package com.guidev1911.encurtadorURL.service;
 
+import com.guidev1911.encurtadorURL.dto.UrlResponse;
 import com.guidev1911.encurtadorURL.model.Url;
 import com.guidev1911.encurtadorURL.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,4 +50,17 @@ public class UrlService {
 
         return url.getOriginalUrl();
     }
+    public UrlResponse getUrlStats(String shortCode) {
+        Url url = repository.findByShortCode(shortCode)
+                .orElseThrow(() -> new IllegalArgumentException("URL não encontrada."));
+
+        return new UrlResponse(
+                url.getShortCode(),
+                url.getOriginalUrl(),
+                url.getClickCount(),
+                url.getCreatedAt(),
+                url.getExpirationDate()
+        );
+    }
+
 }
