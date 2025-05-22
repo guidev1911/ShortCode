@@ -1,12 +1,20 @@
 package com.guidev1911.encurtadorURL.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 
+
 public class UrlResponse {
+    @JsonIgnore
     private String shortCode;
+    @JsonIgnore
     private String originalUrl;
+
     private int clickCount;
+    @JsonIgnore
     private LocalDateTime createdAt;
+    @JsonIgnore
     private LocalDateTime expirationDate;
 
     public UrlResponse(String shortCode, String originalUrl, int clickCount, LocalDateTime createdAt, LocalDateTime expirationDate) {
@@ -16,6 +24,7 @@ public class UrlResponse {
         this.createdAt = createdAt;
         this.expirationDate = expirationDate;
     }
+
 
     public String getShortCode() {
         return shortCode;

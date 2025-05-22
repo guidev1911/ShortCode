@@ -16,4 +16,8 @@ public interface UrlControllerDoc {
     @Operation(summary = "Redireciona a URL encurtada para a original")
     @GetMapping("/{shortCode}")
     public ResponseEntity<?> redirect(@PathVariable String shortCode);
+
+    @Operation(summary = "Exibe todas as informações sobre a URL")
+    @GetMapping("/stats/{shortCode}")
+    public ResponseEntity<?> getStats(@PathVariable String shortCode);
 }
