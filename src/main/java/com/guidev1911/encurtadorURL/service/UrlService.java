@@ -4,6 +4,7 @@ import com.guidev1911.encurtadorURL.model.Url;
 import com.guidev1911.encurtadorURL.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -36,10 +37,15 @@ public class UrlService {
         return repository.save(url);
     }
 
-    public Optional<String> getOriginalUrl(String shortCode) {
-        return repository.findByShortCode(shortCode)
-                .filter(url -> url.getExpirationDate().isAfter(LocalDateTime.now()))
-                .map(Url::getOriginalUrl)
-                .orElseThrow(() -> new IllegalArgumentException("URL não encontrada ou expirada.")).describeConstable();
+    @Transactional
+    public String getOriginalUrl(String shortCode) {
+        Url url = repository.findByShortCode(shortCode)
+                .filter(u -> u.getExpirationDate().isAfter(LocalDateTime.now()))
+                .orElseThrow(() -> new IllegalArgumentException("URL não encontrada ou expirada."));
+
+        url.setClickCount(url.getClickCount() + 1);
+        repository.save(url);
+
+        return url.getOriginalUrl();
     }
 }

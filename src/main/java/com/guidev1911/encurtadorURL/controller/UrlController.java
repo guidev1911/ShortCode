@@ -25,11 +25,14 @@ public class UrlController {
 
     @GetMapping("/{shortCode}")
     public ResponseEntity<Object> redirect(@PathVariable String shortCode) {
-        return service.getOriginalUrl(shortCode)
-                .map(url -> ResponseEntity.status(HttpStatus.FOUND)
-                        .location(URI.create(url))
-                        .build())
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            String originalUrl = service.getOriginalUrl(shortCode);
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create(originalUrl))
+                    .build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
     }
-
 }

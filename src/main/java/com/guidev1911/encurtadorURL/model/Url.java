@@ -20,7 +20,11 @@ public class Url {
     @Column(nullable = false)
     private LocalDateTime expirationDate;
 
-    public Url() {}
+    @Column(nullable = false)
+    private int clickCount;
+
+    public Url() {
+    }
 
     public Url(Long id, String originalUrl, String shortCode, LocalDateTime expirationDate) {
         this.id = id;
@@ -59,5 +63,26 @@ public class Url {
 
     public void setExpirationDate(LocalDateTime expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public int getClickCount() {
+        return clickCount;
+    }
+
+    public void setClickCount(int clickCount) {
+        this.clickCount = clickCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Url url = (Url) o;
+        return getClickCount() == url.getClickCount() && Objects.equals(getId(), url.getId()) && Objects.equals(getOriginalUrl(), url.getOriginalUrl()) && Objects.equals(getShortCode(), url.getShortCode()) && Objects.equals(getExpirationDate(), url.getExpirationDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getOriginalUrl(), getShortCode(), getExpirationDate(), getClickCount());
     }
 }
