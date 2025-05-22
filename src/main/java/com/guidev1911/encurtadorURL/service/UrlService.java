@@ -32,8 +32,9 @@ public class UrlService {
             throw new IllegalArgumentException("A data de expiração não pode exceder 7 dias.");
         }
 
-        String shortCode = UUID.randomUUID().toString().substring(0, 8);
-        Url url = new Url(null, originalUrl, shortCode, expirationDate);
+        String shortCode = UUID.randomUUID().toString().substring(0, 6);
+        LocalDateTime lctn = LocalDateTime.now();
+        Url url = new Url(null, originalUrl, shortCode, expirationDate, lctn);
         return repository.save(url);
     }
 

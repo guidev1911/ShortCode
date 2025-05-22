@@ -18,19 +18,19 @@ public class Url {
     private String shortCode;
 
     @Column(nullable = false)
+    private LocalDateTime createdAt;
+    @Column(nullable = false)
     private LocalDateTime expirationDate;
 
     @Column(nullable = false)
     private int clickCount;
 
-    public Url() {
-    }
-
-    public Url(Long id, String originalUrl, String shortCode, LocalDateTime expirationDate) {
+    public Url(Long id, String originalUrl, String shortCode, LocalDateTime expirationDate, LocalDateTime createdAt) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.shortCode = shortCode;
         this.expirationDate = expirationDate;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -57,6 +57,14 @@ public class Url {
         this.shortCode = shortCode;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public LocalDateTime getExpirationDate() {
         return expirationDate;
     }
@@ -78,11 +86,11 @@ public class Url {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Url url = (Url) o;
-        return getClickCount() == url.getClickCount() && Objects.equals(getId(), url.getId()) && Objects.equals(getOriginalUrl(), url.getOriginalUrl()) && Objects.equals(getShortCode(), url.getShortCode()) && Objects.equals(getExpirationDate(), url.getExpirationDate());
+        return getClickCount() == url.getClickCount() && Objects.equals(getId(), url.getId()) && Objects.equals(getOriginalUrl(), url.getOriginalUrl()) && Objects.equals(getShortCode(), url.getShortCode()) && Objects.equals(getCreatedAt(), url.getCreatedAt()) && Objects.equals(getExpirationDate(), url.getExpirationDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOriginalUrl(), getShortCode(), getExpirationDate(), getClickCount());
+        return Objects.hash(getId(), getOriginalUrl(), getShortCode(), getCreatedAt(), getExpirationDate(), getClickCount());
     }
 }

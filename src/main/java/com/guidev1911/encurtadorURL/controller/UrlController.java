@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 
 @RestController
 public class UrlController {
@@ -20,7 +21,7 @@ public class UrlController {
     @PostMapping("/shorten")
     public ResponseEntity<UrlResponse> shorten(@RequestBody UrlRequest request) {
         Url url = service.createShortUrl(request.getOriginalUrl(), request.getExpirationDate());
-        return ResponseEntity.ok(new UrlResponse(url.getShortCode(), url.getExpirationDate()));
+        return ResponseEntity.ok(new UrlResponse(url.getShortCode(), url.getOriginalUrl(), url.getClickCount(), url.getCreatedAt(), url.getExpirationDate()));
     }
 
     @GetMapping("/{shortCode}")
