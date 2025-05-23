@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class UrlController {
@@ -18,9 +20,13 @@ public class UrlController {
     private UrlService service;
 
     @PostMapping("/shorten")
-    public ResponseEntity<UrlResponse> shorten(@RequestBody UrlRequest request) {
+    public ResponseEntity<Object> shorten(@RequestBody UrlRequest request) {
         Url url = service.createShortUrl(request.getOriginalUrl(), request.getExpirationDate());
-        return ResponseEntity.ok(new UrlResponse(url.getShortCode(), url.getOriginalUrl(), url.getClickCount(), url.getCreatedAt(), url.getExpirationDate()));
+
+        Map<String, String> response = new HashMap<>();
+        response.put("shortCode", "localhost:8080/"+url.getShortCode());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{shortCode}")

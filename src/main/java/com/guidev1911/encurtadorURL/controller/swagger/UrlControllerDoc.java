@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public interface UrlControllerDoc {
 
     @Operation(summary = "Cria uma URL encurtada")
-    @ApiResponse(responseCode = "200", description = "URL encurtada criada com sucesso")
+    @ApiResponse(responseCode = "201", description = "URL encurtada criada com sucesso")
     @PostMapping("/shorten")
     public ResponseEntity<UrlResponse> shorten(@RequestBody UrlRequest request);
 
