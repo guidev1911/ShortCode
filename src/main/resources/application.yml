@@ -18,3 +18,31 @@ spring:
 
 server:
   port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, info, loggers, env
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: Encurtador de URLs
+    description: Serviço para encurtar URLs
+    version: 1.0.0
+    author: Guilherme Brito Souza Santos
+    email: guilhermereal1911@gmail.com
+    github: https://github.com/guidev1911
+  environment:
+    name: produção
+    region: sa-east-1
+  database:
+    type: MySQL
+    version: 9.1.0
+
