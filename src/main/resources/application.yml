@@ -44,5 +44,5 @@ info:
     region: sa-east-1
   database:
     type: MySQL
-    version: 9.1.0
+    version: 8.0.40
 
