@@ -1,4 +1,4 @@
-# Encurtador de URL - Spring Boot com Docker
+# Encurtador de URL - JAVA Spring Boot + Docker
 
 Este projeto é uma API de encurtador de URLs desenvolvida com **Spring Boot**, utilizando banco de dados **MySQL 8.0.40**, com suporte a **Swagger**, **Spring Actuator**, **rate limiting**, **testes unitários e de integração**, e pronta para execução via Docker.
 
@@ -36,6 +36,7 @@ Este projeto é uma API de encurtador de URLs desenvolvida com **Spring Boot**, 
   "createdAt": "2025-05-25T10:30:00Z",
   "expiresAt": "2025-06-25T10:30:00Z"
 }
+```
 Endpoints do Spring Actuator
 Endpoint	Descrição
 /actuator/health	Verifica se a aplicação está no ar.
@@ -71,8 +72,15 @@ Documentação da API disponível em:
 📮 Exemplo de uso com Postman
 Abra o Postman.
 
-Crie uma nova requisição GET para http://localhost:8080/shorten?url=https://google.com.
+Crie uma nova requisição GET para http://localhost:8080/shorten
 
+OBS: colocar uma data de expiração é OPCIONAL, sem ela o prazo de expiração será padrão de 1 dia.
+```json 
+{
+  "expirationDate": "2025-05-25T21:23:41.996Z",
+  "originalUrl": "string"
+} 
+```
 Observe o retorno com a URL encurtada.
 
 Teste o redirecionamento usando o código gerado em /{shortCode}.
@@ -80,7 +88,11 @@ Teste o redirecionamento usando o código gerado em /{shortCode}.
 Consulte estatísticas com GET /stats/{shortCode}.
 
 👤 Autor
-Nome do Autor
+
+Nome do Autor : Guilherme Brito Souza Santos
+
 Email: [guilhermereal1911@gmail.com]
+
 LinkedIn: [linkedin.com/in/seu-usuario](https://www.linkedin.com/in/guilherme-brito-souza-santos-49766329b/)
+
 GitHub: github.com/guidev1911
