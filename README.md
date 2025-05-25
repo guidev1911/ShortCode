@@ -74,7 +74,7 @@ Abra o Postman.
 
 Crie uma nova requisição GET para http://localhost:8080/shorten
 
-OBS: colocar uma data de expiração é OPCIONAL, sem ela o prazo de expiração será padrão de 1 dia.
+OBS: colocar uma data de expiração é OPCIONAL, sem ela o prazo de expiração será padrão de 1 dia, e se for fonecida, o máximo será 7 dias.
 ```json 
 {
   "expirationDate": "2025-05-25T21:23:41.996Z",
