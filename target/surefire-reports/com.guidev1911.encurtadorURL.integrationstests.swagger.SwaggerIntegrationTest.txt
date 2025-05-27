@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.guidev1911.encurtadorURL.integrationstests.swagger.SwaggerIntegrationTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 19.15 s -- in com.guidev1911.encurtadorURL.integrationstests.swagger.SwaggerIntegrationTest
