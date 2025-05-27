@@ -1,0 +1,6 @@
+com\guidev1911\encurtadorURL\unitTests\service\UrlServiceTest.class
+com\guidev1911\encurtadorURL\config\TestConfigs.class
+com\guidev1911\encurtadorURL\integrationstests\testcontainers\AbstractIntegrationTest$Initializer.class
+com\guidev1911\encurtadorURL\integrationstests\swagger\SwaggerIntegrationTest.class
+com\guidev1911\encurtadorURL\unitTests\controller\UrlControllerTest.class
+com\guidev1911\encurtadorURL\integrationstests\testcontainers\AbstractIntegrationTest.class
