@@ -61,8 +61,13 @@ Editar
 git clone https://github.com/seu-usuario/seu-repositorio.git
 cd seu-repositorio
 
+Ou faça download do projeto e abra em uma IDE de sua escolha
+
 # Suba os containers
-docker-compose up --build
+Antes de subir o conteiner docker execute o comando "mvn clean package" em um cmd dentro da pasta do projeto para gerar a o arquivo .Jar
+
+Após ter o build concluído execute o comando "docker-compose up --build" com o docker desktop em execução
+
 A API será exposta em: http://localhost:8080
 
 📘 Acessar via Swagger
