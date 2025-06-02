@@ -21,7 +21,7 @@ Este projeto é uma API de encurtador de URLs desenvolvida com **Spring Boot**, 
 
 | Método | Endpoint                      | Descrição                                                       |
 |--------|-------------------------------|-----------------------------------------------------------------|
-| GET    | `/shorten`                    | Gera e retorna uma URL encurtada a partir da URL original.     |
+| POST   | `/shorten`                    | Gera e retorna uma URL encurtada a partir da URL original.     |
 | GET    | `/{shortCode}`                | Redireciona para a URL original baseada no código curto.       |
 | GET    | `/stats/{shortCode}`          | Retorna estatísticas da URL encurtada.                         |
 
@@ -77,7 +77,7 @@ Documentação da API disponível em:
 📮 Exemplo de uso com Postman
 Abra o Postman.
 
-Crie uma nova requisição GET para http://localhost:8080/shorten
+Crie uma nova requisição POST para http://localhost:8080/shorten
 
 OBS: colocar uma data de expiração é OPCIONAL, sem ela o prazo de expiração será padrão de 1 dia, e se for fonecida, o máximo será 7 dias.
 ```json 
