@@ -12,6 +12,8 @@ Este projeto é uma API de encurtador de URLs desenvolvida com **Spring Boot**, 
 - Limite de requisições: **máx. 100 por minuto por cliente**.
 - Monitoramento e métricas com Spring Actuator.
 - Documentação interativa via Swagger.
+- Validação contra links maliciosos.
+- Os registros expirados são removidos automaticamente às 03h.
 
 ---
 
