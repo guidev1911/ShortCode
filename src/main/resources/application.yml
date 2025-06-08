@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/urlshortenerdb?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/urlshortenerdb?useSSL=false&serverTimezone=America/Sao_Paulo
     username: root
     password: 1911
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -13,7 +13,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
-  jackson:
+jackson:
     time-zone: America/Sao_Paulo
 
 server:

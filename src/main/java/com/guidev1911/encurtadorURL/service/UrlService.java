@@ -32,7 +32,7 @@ public class UrlService {
         LocalDateTime now = LocalDateTime.now();
 
         if (expirationDate == null) {
-            expirationDate = now.plusDays(1);
+            expirationDate = now.plusSeconds(20);
         } else if (expirationDate.isBefore(now)) {
             throw new IllegalArgumentException("A data de expiração não pode estar no passado.");
         } else if (expirationDate.isAfter(now.plusDays(7))) {
