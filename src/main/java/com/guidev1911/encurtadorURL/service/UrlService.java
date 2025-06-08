@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 public class UrlService {
@@ -17,16 +19,20 @@ public class UrlService {
     @Autowired
     private UrlRepository repository;
 
-    public Url createShortUrl(String originalUrl,  LocalDateTime expirationDate) {
+    public Url createShortUrl(String originalUrl, LocalDateTime expirationDate) {
 
         if (originalUrl == null || originalUrl.isBlank()) {
             throw new IllegalArgumentException("A URL original não pode estar vazia.");
         }
 
+        if (!isValidUrl(originalUrl)) {
+            throw new IllegalArgumentException("A URL fornecida é inválida ou potencialmente maliciosa.");
+        }
+
         LocalDateTime now = LocalDateTime.now();
 
         if (expirationDate == null) {
-            expirationDate = now.plusDays(1); // padrão
+            expirationDate = now.plusDays(1);
         } else if (expirationDate.isBefore(now)) {
             throw new IllegalArgumentException("A data de expiração não pode estar no passado.");
         } else if (expirationDate.isAfter(now.plusDays(7))) {
@@ -61,6 +67,21 @@ public class UrlService {
                 url.getCreatedAt(),
                 url.getExpirationDate()
         );
+    }
+    private boolean isValidUrl(String url) {
+        try {
+            URL parsedUrl = new URL(url);
 
+            String protocol = parsedUrl.getProtocol();
+            if (!protocol.equals("http") && !protocol.equals("https")) {
+                return false;
+            }
+
+            String regex = "^(http|https)://[a-zA-Z0-9.-]+\\.[a-z]{2,}.*$";
+            return Pattern.matches(regex, url);
+
+        } catch (MalformedURLException e) {
+            return false;
+        }
     }
 }

@@ -9,7 +9,7 @@ services:
       MYSQL_ROOT_PASSWORD: 1911
       MYSQL_DATABASE: urlshortnerdb
     ports:
-      - "3307:3306"  # A porta externa continua 3307, interna 3306 (padrão do MySQL)
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:

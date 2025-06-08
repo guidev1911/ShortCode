@@ -5,8 +5,6 @@ import com.guidev1911.encurtadorURL.dto.UrlRequest;
 import com.guidev1911.encurtadorURL.dto.UrlResponse;
 import com.guidev1911.encurtadorURL.model.Url;
 import com.guidev1911.encurtadorURL.service.UrlService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
