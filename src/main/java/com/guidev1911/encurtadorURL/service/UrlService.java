@@ -6,12 +6,8 @@ import com.guidev1911.encurtadorURL.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.UUID;
-import java.util.regex.Pattern;
+
 
 @Service
 public class UrlService {
@@ -19,27 +15,31 @@ public class UrlService {
     @Autowired
     private UrlRepository repository;
 
+    @Autowired
+    private UrlServiceValidation validation;
+
     public Url createShortUrl(String originalUrl, LocalDateTime expirationDate) {
 
         if (originalUrl == null || originalUrl.isBlank()) {
             throw new IllegalArgumentException("A URL original não pode estar vazia.");
         }
 
-        if (!isValidUrl(originalUrl)) {
+        if (!validation.isValidUrl(originalUrl)) {
             throw new IllegalArgumentException("A URL fornecida é inválida ou potencialmente maliciosa.");
         }
 
         LocalDateTime now = LocalDateTime.now();
 
         if (expirationDate == null) {
-            expirationDate = now.plusSeconds(20);
+            expirationDate = now.plusDays(1);
         } else if (expirationDate.isBefore(now)) {
             throw new IllegalArgumentException("A data de expiração não pode estar no passado.");
         } else if (expirationDate.isAfter(now.plusDays(7))) {
             throw new IllegalArgumentException("A data de expiração não pode exceder 7 dias.");
         }
 
-        String shortCode = UUID.randomUUID().toString().substring(0, 6);
+        String shortCode = validation.generateUniqueShortCode();
+
         LocalDateTime lctn = LocalDateTime.now();
         Url url = new Url(null, originalUrl, shortCode, expirationDate, lctn);
         return repository.save(url);
@@ -67,21 +67,5 @@ public class UrlService {
                 url.getCreatedAt(),
                 url.getExpirationDate()
         );
-    }
-    private boolean isValidUrl(String url) {
-        try {
-            URL parsedUrl = new URL(url);
-
-            String protocol = parsedUrl.getProtocol();
-            if (!protocol.equals("http") && !protocol.equals("https")) {
-                return false;
-            }
-
-            String regex = "^(http|https)://[a-zA-Z0-9.-]+\\.[a-z]{2,}.*$";
-            return Pattern.matches(regex, url);
-
-        } catch (MalformedURLException e) {
-            return false;
-        }
     }
 }

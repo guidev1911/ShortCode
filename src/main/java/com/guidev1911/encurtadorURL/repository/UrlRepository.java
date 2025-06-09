@@ -8,5 +8,7 @@ import java.util.Optional;
 public interface UrlRepository extends JpaRepository<Url, Long> {
     Optional<Url> findByShortCode(String shortCode);
     int deleteByExpirationDateBefore(LocalDateTime dateTime);
+    boolean existsByShortCode(String shortCode);
+
 }
 
