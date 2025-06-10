@@ -6,10 +6,12 @@ import com.guidev1911.encurtadorURL.dto.UrlResponse;
 import com.guidev1911.encurtadorURL.model.Url;
 import com.guidev1911.encurtadorURL.repository.UrlRepository;
 import com.guidev1911.encurtadorURL.service.UrlService;
+import com.guidev1911.encurtadorURL.service.UrlServiceValidation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,13 +24,19 @@ class UrlServiceTest {
     @Mock
     private UrlRepository repository;
 
+    @Mock
+    private UrlServiceValidation validation;
+
     @InjectMocks
     private UrlService service;
 
-    private final String ORIGINAL_URL = "https://meusite.com";
+    private final String ORIGINAL_URL = "https://www.youtube.com/";
+
 
     @Test
     void deveCriarShortUrlComDataPadrao() {
+        when(validation.isValidUrl(ORIGINAL_URL)).thenReturn(true);
+
         Url mockUrl = new Url(1L, ORIGINAL_URL, "abc123", LocalDateTime.now().plusDays(1), LocalDateTime.now());
         when(repository.save(any())).thenReturn(mockUrl);
 
@@ -50,19 +58,26 @@ class UrlServiceTest {
 
     @Test
     void deveLancarExcecaoSeDataExpirada() {
-        LocalDateTime passada = LocalDateTime.now().minusDays(1);
-        Exception e = assertThrows(IllegalArgumentException.class, () ->
+        when(validation.isValidUrl(ORIGINAL_URL)).thenReturn(true);
+
+        LocalDateTime passada = LocalDateTime.now().minusDays(2);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () ->
                 service.createShortUrl(ORIGINAL_URL, passada)
         );
+
         assertEquals("A data de expiração não pode estar no passado.", e.getMessage());
     }
 
     @Test
     void deveLancarExcecaoSeDataMaiorQue7Dias() {
+        when(validation.isValidUrl(ORIGINAL_URL)).thenReturn(true);
+
         LocalDateTime longa = LocalDateTime.now().plusDays(8);
         Exception e = assertThrows(IllegalArgumentException.class, () ->
                 service.createShortUrl(ORIGINAL_URL, longa)
         );
+
         assertEquals("A data de expiração não pode exceder 7 dias.", e.getMessage());
     }
 
