@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class UrlServiceValidation {
 
     @Autowired
-    private UrlRepository repository;
+    public UrlRepository repository;
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int CODE_LENGTH = 6;
