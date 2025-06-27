@@ -15,7 +15,7 @@
 	<description>encurtador de URL com SpringBoot</description>
 	<properties>
 		<java.version>21</java.version>
-		<springdoc.version>2.7.0</springdoc.version>
+		<springdoc.version>2.3.0</springdoc.version>
 		<testcontainers.version>1.20.4</testcontainers.version>
 	</properties>
 	<dependencies>
@@ -80,6 +80,11 @@
 			<groupId>com.bucket4j</groupId>
 			<artifactId>bucket4j-core</artifactId>
 			<version>8.10.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>dotenv-java</artifactId>
+			<version>2.2.0</version>
 		</dependency>
 	</dependencies>
 
