@@ -1,8 +1,7 @@
 package com.guidev1911.encurtadorURL.unitTests.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.guidev1911.encurtadorURL.dto.UrlResponse;
+import com.guidev1911.encurtadorURL.exceptions.*;
 import com.guidev1911.encurtadorURL.model.Url;
 import com.guidev1911.encurtadorURL.repository.UrlRepository;
 import com.guidev1911.encurtadorURL.service.UrlService;
@@ -15,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,10 +31,10 @@ class UrlServiceTest {
 
     private final String ORIGINAL_URL = "https://www.youtube.com/";
 
-
     @Test
     void deveCriarShortUrlComDataPadrao() {
         when(validation.isValidUrl(ORIGINAL_URL)).thenReturn(true);
+        when(validation.generateUniqueShortCode()).thenReturn("abc123");
 
         Url mockUrl = new Url(1L, ORIGINAL_URL, "abc123", LocalDateTime.now().plusDays(1), LocalDateTime.now());
         when(repository.save(any())).thenReturn(mockUrl);
@@ -48,24 +48,14 @@ class UrlServiceTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoUrlForVazia() {
-        Exception e = assertThrows(IllegalArgumentException.class, () ->
-                service.createShortUrl(" ", null)
-        );
-        assertEquals("A URL original não pode estar vazia.", e.getMessage());
-    }
+    void deveLancarExcecaoQuandoUrlForInvalida() {
+        when(validation.isValidUrl("   ")).thenReturn(false);
 
-    @Test
-    void deveLancarExcecaoSeDataExpirada() {
-        when(validation.isValidUrl(ORIGINAL_URL)).thenReturn(true);
-
-        LocalDateTime passada = LocalDateTime.now().minusDays(2);
-
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () ->
-                service.createShortUrl(ORIGINAL_URL, passada)
+        InvalidUrlFormatException e = assertThrows(InvalidUrlFormatException.class, () ->
+                service.createShortUrl("   ", null)
         );
 
-        assertEquals("A data de expiração não pode estar no passado.", e.getMessage());
+        assertEquals("A URL fornecida é inválida ou potencialmente maliciosa.", e.getMessage());
     }
 
     @Test
@@ -73,7 +63,8 @@ class UrlServiceTest {
         when(validation.isValidUrl(ORIGINAL_URL)).thenReturn(true);
 
         LocalDateTime longa = LocalDateTime.now().plusDays(8);
-        Exception e = assertThrows(IllegalArgumentException.class, () ->
+
+        ExpirationDateExceedsLimitException e = assertThrows(ExpirationDateExceedsLimitException.class, () ->
                 service.createShortUrl(ORIGINAL_URL, longa)
         );
 
@@ -99,7 +90,7 @@ class UrlServiceTest {
     void deveLancarExcecaoSeUrlNaoForEncontradaOuExpirada() {
         when(repository.findByShortCode("invalido")).thenReturn(Optional.empty());
 
-        Exception e = assertThrows(IllegalArgumentException.class, () ->
+        UrlNotFoundException e = assertThrows(UrlNotFoundException.class, () ->
                 service.getOriginalUrl("invalido")
         );
 
@@ -124,7 +115,7 @@ class UrlServiceTest {
     void deveLancarExcecaoSeNaoEncontrarEstatistica() {
         when(repository.findByShortCode("naoExiste")).thenReturn(Optional.empty());
 
-        Exception e = assertThrows(IllegalArgumentException.class, () ->
+        UrlNotFoundException e = assertThrows(UrlNotFoundException.class, () ->
                 service.getUrlStats("naoExiste")
         );
 

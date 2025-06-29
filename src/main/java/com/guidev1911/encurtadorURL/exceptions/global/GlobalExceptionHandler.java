@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -27,15 +28,6 @@ public class GlobalExceptionHandler {
                 ex.getMessage(),
                 LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-    @ExceptionHandler(EmptyUrlException.class)
-    public ResponseEntity<ApiErrorResponse> handleEmptyUrlException(EmptyUrlException ex) {
-        ApiErrorResponse response = new ApiErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                LocalDateTime.now()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(InvalidUrlFormatException.class)

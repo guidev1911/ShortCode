@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guidev1911.encurtadorURL.controller.UrlController;
 import com.guidev1911.encurtadorURL.dto.UrlRequest;
 import com.guidev1911.encurtadorURL.dto.UrlResponse;
+import com.guidev1911.encurtadorURL.exceptions.UrlNotFoundException;
+import com.guidev1911.encurtadorURL.exceptions.global.GlobalExceptionHandler;
 import com.guidev1911.encurtadorURL.model.Url;
 import com.guidev1911.encurtadorURL.service.UrlService;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UrlController.class)
+@Import(GlobalExceptionHandler.class)
 class UrlControllerTest {
 
     @Autowired
@@ -34,7 +38,6 @@ class UrlControllerTest {
 
     @Test
     void deveCriarEncurtadorComSucesso() throws Exception {
-
         UrlRequest request = new UrlRequest();
         request.setOriginalUrl("https://exemplo.com");
         request.setExpirationDate(LocalDateTime.of(2025, 12, 31, 23, 59));
@@ -51,6 +54,7 @@ class UrlControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.shortCode").value("localhost:8080/abc123"));
     }
+
     @Test
     void deveRedirecionarQuandoShortCodeExiste() throws Exception {
         String shortCode = "abc123";
@@ -59,20 +63,43 @@ class UrlControllerTest {
         Mockito.when(urlService.getOriginalUrl(shortCode)).thenReturn(originalUrl);
 
         mockMvc.perform(get("/" + shortCode))
-                .andExpect(status().isFound()) // HTTP 302
+                .andExpect(status().isFound())
                 .andExpect(header().string("Location", originalUrl));
     }
+
     @Test
     void deveRetornar404QuandoShortCodeNaoEncontrado() throws Exception {
         String shortCode = "invalido";
 
         Mockito.when(urlService.getOriginalUrl(shortCode))
-                .thenThrow(new IllegalArgumentException("URL não encontrada ou expirada."));
+                .thenThrow(new UrlNotFoundException("URL não encontrada ou expirada."));
 
         mockMvc.perform(get("/" + shortCode))
-                .andExpect(status().isNotFound()) // HTTP 404
-                .andExpect(content().string("URL não encontrada ou expirada."));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("URL não encontrada ou expirada."))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.timestamp").isString());
     }
+
+    @Test
+    void deveRetornar404QuandoStatsNaoEncontrado() throws Exception {
+        String shortCode = "naoExiste";
+
+        Mockito.when(urlService.getUrlStats(shortCode))
+                .thenThrow(new UrlNotFoundException("URL não encontrada."));
+
+        mockMvc.perform(get("/stats/" + shortCode))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("URL não encontrada."))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.timestamp").isString());
+    }
+
+
     @Test
     void deveRetornarStatsQuandoShortCodeExiste() throws Exception {
         String shortCode = "49e465";
@@ -94,16 +121,4 @@ class UrlControllerTest {
                 .andExpect(jsonPath("$.createdAt").value("2025-05-24T20:47:26.505807"))
                 .andExpect(jsonPath("$.expirationDate").value("2025-05-25T20:47:26.505807"));
     }
-    @Test
-    void deveRetornar404QuandoStatsNaoEncontrado() throws Exception {
-        String shortCode = "invalido";
-
-        Mockito.when(urlService.getUrlStats(shortCode))
-                .thenThrow(new IllegalArgumentException("URL não encontrada."));
-
-        mockMvc.perform(get("/stats/" + shortCode))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("URL não encontrada."));
-    }
-
 }

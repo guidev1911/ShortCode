@@ -6,12 +6,12 @@ public class ApiErrorResponse {
 
     private LocalDateTime timestamp;
     private int status;
-    private String error;
+    private String message;
 
-    public ApiErrorResponse(int status, String error, LocalDateTime now) {
+    public ApiErrorResponse(int status, String message, LocalDateTime now) {
         this.timestamp = LocalDateTime.now();
         this.status = status;
-        this.error = error;
+        this.message = message;
     }
 
     public LocalDateTime getTimestamp() {
@@ -22,7 +22,7 @@ public class ApiErrorResponse {
         return status;
     }
 
-    public String getError() {
-        return error;
+    public String getMessage() {
+        return message;
     }
 }
