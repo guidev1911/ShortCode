@@ -1,6 +1,7 @@
 package com.guidev1911.encurtadorURL.service;
 
 import com.guidev1911.encurtadorURL.dto.UrlResponse;
+import com.guidev1911.encurtadorURL.exceptions.*;
 import com.guidev1911.encurtadorURL.model.Url;
 import com.guidev1911.encurtadorURL.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,11 @@ public class UrlService {
     public Url createShortUrl(String originalUrl, LocalDateTime expirationDate) {
 
         if (originalUrl == null || originalUrl.isBlank()) {
-            throw new IllegalArgumentException("A URL original não pode estar vazia.");
+            throw new EmptyUrlException("A URL original não pode estar vazia.");
         }
 
         if (!validation.isValidUrl(originalUrl)) {
-            throw new IllegalArgumentException("A URL fornecida é inválida ou potencialmente maliciosa.");
+            throw new InvalidUrlFormatException("A URL fornecida é inválida ou potencialmente maliciosa.");
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -33,9 +34,9 @@ public class UrlService {
         if (expirationDate == null) {
             expirationDate = now.plusDays(1);
         } else if (expirationDate.isBefore(now)) {
-            throw new IllegalArgumentException("A data de expiração não pode estar no passado.");
+            throw new ExpirationDateInPastException("A data de expiração não pode estar no passado.");
         } else if (expirationDate.isAfter(now.plusDays(7))) {
-            throw new IllegalArgumentException("A data de expiração não pode exceder 7 dias.");
+            throw new ExpirationDateExceedsLimitException("A data de expiração não pode exceder 7 dias.");
         }
 
         String shortCode = validation.generateUniqueShortCode();
@@ -47,9 +48,12 @@ public class UrlService {
 
     @Transactional
     public String getOriginalUrl(String shortCode) {
+        if (shortCode == null || shortCode.isBlank()) {
+            throw new EmptyUrlException("A URL encurtada não pode estar vazia.");
+        }
         Url url = repository.findByShortCode(shortCode)
                 .filter(u -> u.getExpirationDate().isAfter(LocalDateTime.now()))
-                .orElseThrow(() -> new IllegalArgumentException("URL não encontrada ou expirada."));
+                .orElseThrow(() -> new UrlNotFoundException("URL não encontrada ou expirada."));
 
         url.setClickCount(url.getClickCount() + 1);
         repository.save(url);
@@ -57,8 +61,12 @@ public class UrlService {
         return url.getOriginalUrl();
     }
     public UrlResponse getUrlStats(String shortCode) {
+        if (shortCode == null || shortCode.isBlank()) {
+            throw new EmptyUrlException("O código da URL não pode estar vazio.");
+        }
+
         Url url = repository.findByShortCode(shortCode)
-                .orElseThrow(() -> new IllegalArgumentException("URL não encontrada."));
+                .orElseThrow(() -> new UrlNotFoundException("URL não encontrada."));
 
         return new UrlResponse(
                 url.getShortCode(),

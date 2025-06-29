@@ -8,7 +8,7 @@ public class ApiErrorResponse {
     private int status;
     private String error;
 
-    public ApiErrorResponse(int status, String error) {
+    public ApiErrorResponse(int status, String error, LocalDateTime now) {
         this.timestamp = LocalDateTime.now();
         this.status = status;
         this.error = error;
