@@ -1,6 +1,7 @@
 package com.guidev1911.encurtadorURL.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 

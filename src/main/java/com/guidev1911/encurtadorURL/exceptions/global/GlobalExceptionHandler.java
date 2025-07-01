@@ -2,16 +2,48 @@ package com.guidev1911.encurtadorURL.exceptions.global;
 
 import com.guidev1911.encurtadorURL.dto.ApiErrorResponse;
 import com.guidev1911.encurtadorURL.exceptions.*;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map(err -> err.getDefaultMessage())
+                .findFirst()
+                .orElse("Dados inválidos.");
+
+        ApiErrorResponse error = new ApiErrorResponse(400, message);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
+        String message = ex.getConstraintViolations().stream()
+                .map(cv -> cv.getMessage())
+                .findFirst()
+                .orElse("Parâmetro inválido.");
+
+        ApiErrorResponse error = new ApiErrorResponse(400, message);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmptyUrlException.class)
+    public ResponseEntity<ApiErrorResponse> handleEmptyUrlException(EmptyUrlException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(ShortCodeGenerationException.class)
     public ResponseEntity<ApiErrorResponse> handleShortCodeGenerationException(ShortCodeGenerationException ex) {

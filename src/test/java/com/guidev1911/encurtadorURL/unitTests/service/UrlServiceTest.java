@@ -46,16 +46,14 @@ class UrlServiceTest {
         assertEquals("abc123", result.getShortCode());
         verify(repository).save(any(Url.class));
     }
-
     @Test
-    void deveLancarExcecaoQuandoUrlForInvalida() {
-        when(validation.isValidUrl("   ")).thenReturn(false);
+    void deveLancarExpirationDateInPastExceptionQuandoDataExpirada() {
+        when(validation.isValidUrl(ORIGINAL_URL)).thenReturn(true);
+        LocalDateTime passada = LocalDateTime.now().minusDays(1);
 
-        InvalidUrlFormatException e = assertThrows(InvalidUrlFormatException.class, () ->
-                service.createShortUrl("   ", null)
-        );
-
-        assertEquals("A URL fornecida é inválida ou potencialmente maliciosa.", e.getMessage());
+        ExpirationDateInPastException e = assertThrows(ExpirationDateInPastException.class,
+                () -> service.createShortUrl(ORIGINAL_URL, passada));
+        assertEquals("A data de expiração não pode estar no passado.", e.getMessage());
     }
 
     @Test

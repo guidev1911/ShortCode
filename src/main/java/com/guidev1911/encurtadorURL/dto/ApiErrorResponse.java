@@ -13,6 +13,11 @@ public class ApiErrorResponse {
         this.status = status;
         this.message = message;
     }
+    public ApiErrorResponse(int status, String message) {
+        this.timestamp = LocalDateTime.now();
+        this.status = status;
+        this.message = message;
+    }
 
     public LocalDateTime getTimestamp() {
         return timestamp;

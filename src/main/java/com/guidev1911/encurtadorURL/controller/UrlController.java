@@ -1,6 +1,7 @@
 package com.guidev1911.encurtadorURL.controller;
 
 import com.guidev1911.encurtadorURL.controller.swagger.UrlControllerDocs;
+import com.guidev1911.encurtadorURL.dto.ApiErrorResponse;
 import com.guidev1911.encurtadorURL.dto.UrlRequest;
 import com.guidev1911.encurtadorURL.dto.UrlResponse;
 import com.guidev1911.encurtadorURL.model.Url;
@@ -19,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@Validated
 @Tag(name = "URL", description = "Endpoints para criar URLs e consultar dados da URL ")
+@Validated
 public class UrlController implements UrlControllerDocs {
 
     @Autowired
@@ -38,7 +39,7 @@ public class UrlController implements UrlControllerDocs {
     }
     @GetMapping("/{shortCode}")
     @Override
-    public ResponseEntity<?> redirect(@PathVariable @NotBlank String shortCode) {
+    public ResponseEntity<?> redirect(@PathVariable String shortCode) {
         String originalUrl = service.getOriginalUrl(shortCode);
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(originalUrl))
@@ -47,10 +48,9 @@ public class UrlController implements UrlControllerDocs {
 
     @GetMapping("/stats/{shortCode}")
     @Override
-    public ResponseEntity<?> getStats(@PathVariable @NotBlank String shortCode) {
+    public ResponseEntity<?> getStats(@PathVariable String shortCode) {
         UrlResponse response = service.getUrlStats(shortCode);
         return ResponseEntity.ok(response);
     }
-
 
 }
